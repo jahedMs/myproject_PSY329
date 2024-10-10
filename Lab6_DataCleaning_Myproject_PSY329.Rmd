@@ -1,0 +1,19 @@
+---
+title: "PY329 Project"
+author: "Mursal Jahed"
+date: "2024-10-11"
+output: "github_document"
+---
+
+
+
+```{r}
+#If need a package, create a new line and write library
+#haven allows to load a dataset (csv etc)
+#dplyr helps with recode variables
+#ggplot2 helps with plot making
+library(haven)
+library(dplyr)
+library(ggplot2)
+```
+
