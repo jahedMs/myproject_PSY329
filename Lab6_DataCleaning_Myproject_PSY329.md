@@ -78,6 +78,8 @@ library(sjPlot)
 
     ## Warning: package 'sjPlot' was built under R version 4.3.3
 
+    ## #refugeeswelcome
+
 ``` r
 #load dataset
 load("/Users/mursal_j/Downloads/ICPSR_36561/DS0001/36561-0001-Data.rda")
@@ -88,9 +90,39 @@ load("/Users/mursal_j/Downloads/ICPSR_36561/DS0001/36561-0001-Data.rda")
 ``` r
 projectdata <- da36561.0001 %>%
   select(PEERCIVACT1, PARCIVT1, COMMMEANT1, GENDERT1, ETH_MCT1, LIFE_MEAN_1T1, LIFE_MEAN_2T1, LIFE_MEAN_3T1, LIFE_MEAN_4T1, LIFE_MEAN_5T1, GRADET1)
-#create composite of life meaning
-projectdata <- projectdata %>%
-  mutate(life_meaning = rowMeans(cbind(LIFE_MEAN_1T1, LIFE_MEAN_2T1, LIFE_MEAN_3T1, LIFE_MEAN_4T1, LIFE_MEAN_5T1)))
+#recode LIFE_MEAN_5T1 to fit with rest of scale
+projectdata %>% count(LIFE_MEAN_5T1)
+```
+
+    ##                    LIFE_MEAN_5T1   n
+    ## 1          (1) Strongly Disagree 604
+    ## 2                   (2) Disagree 371
+    ## 3 (3) Neither Agree nor Disagree 375
+    ## 4                      (4) Agree 140
+    ## 5             (5) Strongly Agree  70
+    ## 6                           <NA>  18
+
+``` r
+projectdata$LIFE_MEAN_5T1_R <- 6 - projectdata$LIFE_MEAN_5T1
+```
+
+    ## Warning in Ops.factor(6, projectdata$LIFE_MEAN_5T1): '-' not meaningful for
+    ## factors
+
+``` r
+#five is highest possible value on the scale therefore we put six
+#check to see if the recoding was successful
+projectdata %>% count(LIFE_MEAN_5T1_R)
+```
+
+    ##   LIFE_MEAN_5T1_R    n
+    ## 1              NA 1578
+
+``` r
+#line of code above is useful to know if it worked (you need to see that the order switched)
+
+#create composite of life meaning - will work on this in reading week, and try to have it as my exploratory function
+#mutate(life_meaning = rowMeans(cbind(LIFE_MEAN_1T1, LIFE_MEAN_2T1, LIFE_MEAN_3T1, LIFE_MEAN_4T1, LIFE_MEAN_5T1_R)))
 ```
 
 # Missing Data: listwise deletion, and verification that no NA values remain.
@@ -131,14 +163,14 @@ summary(projectdata)
     ##  (5) Strongly Agree            :461   (5) Strongly Agree            :355  
     ##  NA's                          : 17   NA's                          : 24  
     ##                                                                           
-    ##                         LIFE_MEAN_5T1   GRADET1      life_meaning  
-    ##  (1) Strongly Disagree         :604   (1) 9 :   3   Min.   :1.000  
-    ##  (2) Disagree                  :371   (2) 10:   3   1st Qu.:3.200  
-    ##  (3) Neither Agree nor Disagree:375   (3) 11:   4   Median :3.400  
-    ##  (4) Agree                     :140   (4) 12:1561   Mean   :3.499  
-    ##  (5) Strongly Agree            : 70   NA's  :   7   3rd Qu.:3.800  
-    ##  NA's                          : 18                 Max.   :5.000  
-    ##                                                     NA's   :37
+    ##                         LIFE_MEAN_5T1   GRADET1     LIFE_MEAN_5T1_R
+    ##  (1) Strongly Disagree         :604   (1) 9 :   3   Mode:logical   
+    ##  (2) Disagree                  :371   (2) 10:   3   NA's:1578      
+    ##  (3) Neither Agree nor Disagree:375   (3) 11:   4                  
+    ##  (4) Agree                     :140   (4) 12:1561                  
+    ##  (5) Strongly Agree            : 70   NA's  :   7                  
+    ##  NA's                          : 18                                
+    ## 
 
 ``` r
 projectdata[projectdata == "NA"] <- NA
@@ -178,14 +210,14 @@ summary(list_projectdata)
     ##  (5) Strongly Agree            :408   (5) Strongly Agree            :316  
     ##  NA's                          :  8   NA's                          : 13  
     ##                                                                           
-    ##                         LIFE_MEAN_5T1   GRADET1      life_meaning  
-    ##  (1) Strongly Disagree         :535   (1) 9 :   3   Min.   :1.000  
-    ##  (2) Disagree                  :328   (2) 10:   3   1st Qu.:3.200  
-    ##  (3) Neither Agree nor Disagree:319   (3) 11:   3   Median :3.400  
-    ##  (4) Agree                     :126   (4) 12:1375   Mean   :3.505  
-    ##  (5) Strongly Agree            : 67                 3rd Qu.:3.800  
-    ##  NA's                          :  9                 Max.   :5.000  
-    ##                                                     NA's   :24
+    ##                         LIFE_MEAN_5T1   GRADET1     LIFE_MEAN_5T1_R
+    ##  (1) Strongly Disagree         :535   (1) 9 :   3   Mode:logical   
+    ##  (2) Disagree                  :328   (2) 10:   3   NA's:1384      
+    ##  (3) Neither Agree nor Disagree:319   (3) 11:   3                  
+    ##  (4) Agree                     :126   (4) 12:1375                  
+    ##  (5) Strongly Agree            : 67                                
+    ##  NA's                          :  9                                
+    ## 
 
 \#Checking for Assumptions
 
@@ -229,11 +261,11 @@ plot_model(model,  type ="est",  show.values = TRUE, vline.color = "#1B191999", 
 
 ![](Lab6_DataCleaning_Myproject_PSY329_files/figure-gfm/unnamed-chunk-5-1.png)<!-- -->
 
-\#Analysis - How does this relationship change if grade is taken into
-account?
+\#Analysis - How does this relationship change if the gender of these
+teenagers is taken into account?
 
 ``` r
-model <- lm(COMMMEANT1 ~ PARCIVT1+ PARCIVT1 * GRADET1 + PEERCIVACT1 + PEERCIVACT1 * GRADET1, data = list_projectdata)
+model <- lm(COMMMEANT1 ~ PARCIVT1+ PARCIVT1 * GENDERT1 + PEERCIVACT1 + PEERCIVACT1 * GENDERT1, data = list_projectdata)
 check_model(model)
 ```
 
@@ -245,33 +277,27 @@ summary(model)
 
     ## 
     ## Call:
-    ## lm(formula = COMMMEANT1 ~ PARCIVT1 + PARCIVT1 * GRADET1 + PEERCIVACT1 + 
-    ##     PEERCIVACT1 * GRADET1, data = list_projectdata)
+    ## lm(formula = COMMMEANT1 ~ PARCIVT1 + PARCIVT1 * GENDERT1 + PEERCIVACT1 + 
+    ##     PEERCIVACT1 * GENDERT1, data = list_projectdata)
     ## 
     ## Residuals:
     ##      Min       1Q   Median       3Q      Max 
-    ## -2.08862 -0.46915  0.01879  0.47553  2.35961 
+    ## -2.18117 -0.45526  0.02684  0.46810  2.29490 
     ## 
-    ## Coefficients: (1 not defined because of singularities)
-    ##                           Estimate Std. Error t value Pr(>|t|)   
-    ## (Intercept)                -0.3059     0.9223  -0.332   0.7402   
-    ## PARCIVT1                   -3.6706     1.8096  -2.028   0.0427 * 
-    ## GRADET1(2) 10             -44.8353    22.9408  -1.954   0.0509 . 
-    ## GRADET1(3) 11              -9.0408     5.3040  -1.705   0.0885 . 
-    ## GRADET1(4) 12               0.9134     0.9270   0.985   0.3246   
-    ## PEERCIVACT1                 4.9765     2.0775   2.395   0.0167 * 
-    ## PARCIVT1:GRADET1(2) 10     17.2588     8.8704   1.946   0.0519 . 
-    ## PARCIVT1:GRADET1(3) 11      5.1106     1.9595   2.608   0.0092 **
-    ## PARCIVT1:GRADET1(4) 12      3.7838     1.8097   2.091   0.0367 * 
-    ## GRADET1(2) 10:PEERCIVACT1       NA         NA      NA       NA   
-    ## GRADET1(3) 11:PEERCIVACT1  -2.8965     2.2626  -1.280   0.2007   
-    ## GRADET1(4) 12:PEERCIVACT1  -4.5115     2.0777  -2.171   0.0301 * 
+    ## Coefficients:
+    ##                                Estimate Std. Error t value Pr(>|t|)    
+    ## (Intercept)                     0.52781    0.12391   4.260 2.19e-05 ***
+    ## PARCIVT1                        0.11320    0.02909   3.892 0.000104 ***
+    ## GENDERT1(1) Female              0.27697    0.18464   1.500 0.133839    
+    ## PEERCIVACT1                     0.45604    0.03120  14.617  < 2e-16 ***
+    ## PARCIVT1:GENDERT1(1) Female     0.01565    0.04080   0.384 0.701361    
+    ## GENDERT1(1) Female:PEERCIVACT1 -0.02658    0.04487  -0.592 0.553781    
     ## ---
     ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
     ## 
-    ## Residual standard error: 0.6644 on 1373 degrees of freedom
-    ## Multiple R-squared:  0.2831, Adjusted R-squared:  0.2779 
-    ## F-statistic: 54.22 on 10 and 1373 DF,  p-value: < 2.2e-16
+    ## Residual standard error: 0.6569 on 1378 degrees of freedom
+    ## Multiple R-squared:  0.2966, Adjusted R-squared:  0.2941 
+    ## F-statistic: 116.2 on 5 and 1378 DF,  p-value: < 2.2e-16
 
 ``` r
 plot_model(model, type = "est", show.values = TRUE, vline.color = "#1B191999", 
@@ -279,8 +305,5 @@ plot_model(model, type = "est", show.values = TRUE, vline.color = "#1B191999",
            terms = c("PARCIVT1", "PEERCIVACT1"), 
            interaction = TRUE)
 ```
-
-    ## Model matrix is rank deficient. Parameters `GRADET1(2) 10:PEERCIVACT1`
-    ##   were not estimable.
 
 ![](Lab6_DataCleaning_Myproject_PSY329_files/figure-gfm/unnamed-chunk-6-2.png)<!-- -->
