@@ -7,23 +7,57 @@ output: "github_document"
 
 #load packages
 ```{r}
-#If need a package, create a new line and write library
-#haven allows to load a dataset (csv etc)
-#dplyr helps with recode variables
-#ggplot2 helps with plot making
 library(haven)
 library(dplyr)
 library(ggplot2)
-
+library(tidyr) 
+library(psych)
+library(car)
+library(lmtest)
+library(performance)
+library(sjPlot)
 #load dataset
 load("/Users/mursal_j/Downloads/ICPSR_36561/DS0001/36561-0001-Data.rda")
-
-#goal for today is to:  re-code variables, check for assumptions
 ```
 
+#select variables
 ```{r}
-new_dataset <- da36561.0001 %>%
-  select(PEERCIVACT1, COMMMEANT1, CIVINTENTT1, YIIACTS_16T1, YIIACTS_17T1, GENDERT1, ETH_MCT1)
+projectdata <- da36561.0001 %>%
+  select(PEERCIVACT1, PARCIVT1, COMMMEANT1, GENDERT1, ETH_MCT1, LIFE_MEAN_1T1, LIFE_MEAN_2T1, LIFE_MEAN_3T1, LIFE_MEAN_4T1, LIFE_MEAN_5T1, GRADET1)
+#create composite of life meaning
+projectdata <- projectdata %>%
+  mutate(life_meaning = rowMeans(cbind(LIFE_MEAN_1T1, LIFE_MEAN_2T1, LIFE_MEAN_3T1, LIFE_MEAN_4T1, LIFE_MEAN_5T1)))
 
-#I will be completing the remainder of this assignment with my study buddy next week. Next steps include checking for assumptions as we learned in class for the past few weeks. I will make transformations as needed. I will also be creating my composite score using YIIACTS_16T1 and YIIACTS_17T1.
 ```
+
+# Missing Data: listwise deletion, and verification that no NA values remain.
+```{r}
+summary(projectdata)
+projectdata[projectdata == "NA"] <- NA
+list_projectdata <- drop_na(projectdata, PEERCIVACT1, PARCIVT1, COMMMEANT1, GENDERT1, ETH_MCT1, GRADET1)
+summary(list_projectdata)
+```
+
+#Checking for Assumptions
+```{r}
+model <- lm(COMMMEANT1 ~ PARCIVT1 + PEERCIVACT1, data = list_projectdata)
+check_model(model)
+summary(model)
+```
+
+#Analysis - How do parental vs peer civic involvement influence civic involvement in teenagers?
+```{r}
+plot_model(model,  type ="est",  show.values = TRUE, vline.color = "#1B191999", line.size = 1.5, dot.size = 2.5, colors = "blue")
+```
+
+#Analysis - How does this relationship change if grade is taken into account?
+```{r}
+model <- lm(COMMMEANT1 ~ PARCIVT1+ PARCIVT1 * GRADET1 + PEERCIVACT1 + PEERCIVACT1 * GRADET1, data = list_projectdata)
+check_model(model)
+summary(model)
+plot_model(model, type = "est", show.values = TRUE, vline.color = "#1B191999", 
+           line.size = 1.5, dot.size = 2.5, colors = "blue", 
+           terms = c("PARCIVT1", "PEERCIVACT1"), 
+           interaction = TRUE)
+```
+
