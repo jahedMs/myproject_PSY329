@@ -27,7 +27,7 @@ list_projectdata <- drop_na(da36561.0001)
 #select variables
 ```{r}
 list_projectdata <- da36561.0001 %>% 
-  select(PEERCIVACT1, PARCIVT1, COMMMEANT1, GENDERT1, ETH_MCT1, GRADET1, GOVTRESPT1)
+  select(PEERCIVACT1, PARCIVT1, COMMMEANT1, GENDERT1, ETH_MCT1, GRADET1, CRITNEWST1)
 ```
 
 #Checking for Assumptions
@@ -40,16 +40,17 @@ summary(model)
 #Analysis - How do parental vs peer civic involvement influence civic involvement in teenagers?
 ```{r}
 plot_model(model,  type ="est",  show.values = TRUE, vline.color = "#1B191999", line.size = 1.5, dot.size = 2.5, colors = "blue")
+tab_model(model)
 ```
 
 #Analysis - How does this relationship change if the teens' beliefs about government responsiveness is taken into account?
 ```{r}
-model <- lm(COMMMEANT1 ~ PARCIVT1 * GOVTRESPT1 + PEERCIVACT1 * GOVTRESPT1, data = list_projectdata)
+model <- lm(COMMMEANT1 ~ CRITNEWST1 + PARCIVT1 + PEERCIVACT1, data = list_projectdata)
 check_model(model)
 summary(model)
 plot_model(model, type = "est", show.values = TRUE, vline.color = "#1B191999", 
            line.size = 1.5, dot.size = 2.5, colors = "blue", 
-           terms = c("PARCIVT1", "PEERCIVACT1"), 
-           interaction = TRUE)
+           terms = c("CRITNEWST1", "PARCIVT1", "PEERCIVACT1"))
+tab_model(model)
 ```
 

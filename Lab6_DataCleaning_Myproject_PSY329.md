@@ -78,8 +78,6 @@ library(sjPlot)
 
     ## Warning: package 'sjPlot' was built under R version 4.3.3
 
-    ## Learn more about sjPlot with 'browseVignettes("sjPlot")'.
-
 ``` r
 #load dataset
 load("/Users/mursal_j/Downloads/ICPSR_36561/DS0001/36561-0001-Data.rda")
@@ -95,7 +93,7 @@ list_projectdata <- drop_na(da36561.0001)
 
 ``` r
 list_projectdata <- da36561.0001 %>% 
-  select(PEERCIVACT1, PARCIVT1, COMMMEANT1, GENDERT1, ETH_MCT1, GRADET1, GOVTRESPT1)
+  select(PEERCIVACT1, PARCIVT1, COMMMEANT1, GENDERT1, ETH_MCT1, GRADET1, CRITNEWST1)
 ```
 
 \#Checking for Assumptions
@@ -141,11 +139,98 @@ plot_model(model,  type ="est",  show.values = TRUE, vline.color = "#1B191999", 
 
 ![](Lab6_DataCleaning_Myproject_PSY329_files/figure-gfm/unnamed-chunk-5-1.png)<!-- -->
 
+``` r
+tab_model(model)
+```
+
+<table style="border-collapse:collapse; border:none;">
+<tr>
+<th style="border-top: double; text-align:center; font-style:normal; font-weight:bold; padding:0.2cm;  text-align:left; ">
+ 
+</th>
+<th colspan="3" style="border-top: double; text-align:center; font-style:normal; font-weight:bold; padding:0.2cm; ">
+COMMMEANT1
+</th>
+</tr>
+<tr>
+<td style=" text-align:center; border-bottom:1px solid; font-style:italic; font-weight:normal;  text-align:left; ">
+Predictors
+</td>
+<td style=" text-align:center; border-bottom:1px solid; font-style:italic; font-weight:normal;  ">
+Estimates
+</td>
+<td style=" text-align:center; border-bottom:1px solid; font-style:italic; font-weight:normal;  ">
+CI
+</td>
+<td style=" text-align:center; border-bottom:1px solid; font-style:italic; font-weight:normal;  ">
+p
+</td>
+</tr>
+<tr>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; ">
+(Intercept)
+</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">
+0.59
+</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">
+0.41 – 0.77
+</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">
+<strong>\<0.001</strong>
+</td>
+</tr>
+<tr>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; ">
+PARCIVT1
+</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">
+0.11
+</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">
+0.07 – 0.15
+</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">
+<strong>\<0.001</strong>
+</td>
+</tr>
+<tr>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; ">
+PEERCIVACT1
+</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">
+0.47
+</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">
+0.43 – 0.51
+</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">
+<strong>\<0.001</strong>
+</td>
+</tr>
+<tr>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; padding-top:0.1cm; padding-bottom:0.1cm; border-top:1px solid;">
+Observations
+</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; padding-top:0.1cm; padding-bottom:0.1cm; text-align:left; border-top:1px solid;" colspan="3">
+1405
+</td>
+</tr>
+<tr>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; padding-top:0.1cm; padding-bottom:0.1cm;">
+R<sup>2</sup> / R<sup>2</sup> adjusted
+</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; padding-top:0.1cm; padding-bottom:0.1cm; text-align:left;" colspan="3">
+0.278 / 0.277
+</td>
+</tr>
+</table>
+
 \#Analysis - How does this relationship change if the teens’ beliefs
 about government responsiveness is taken into account?
 
 ``` r
-model <- lm(COMMMEANT1 ~ PARCIVT1 * GOVTRESPT1 + PEERCIVACT1 * GOVTRESPT1, data = list_projectdata)
+model <- lm(COMMMEANT1 ~ CRITNEWST1 + PARCIVT1 + PEERCIVACT1, data = list_projectdata)
 check_model(model)
 ```
 
@@ -157,34 +242,132 @@ summary(model)
 
     ## 
     ## Call:
-    ## lm(formula = COMMMEANT1 ~ PARCIVT1 * GOVTRESPT1 + PEERCIVACT1 * 
-    ##     GOVTRESPT1, data = list_projectdata)
+    ## lm(formula = COMMMEANT1 ~ CRITNEWST1 + PARCIVT1 + PEERCIVACT1, 
+    ##     data = list_projectdata)
     ## 
     ## Residuals:
     ##      Min       1Q   Median       3Q      Max 
-    ## -2.11227 -0.47372  0.02273  0.47196  2.41465 
+    ## -2.01071 -0.44651  0.01827  0.46552  2.32954 
     ## 
     ## Coefficients:
-    ##                         Estimate Std. Error t value Pr(>|t|)    
-    ## (Intercept)             0.888351   0.273076   3.253  0.00117 ** 
-    ## PARCIVT1                0.115976   0.063888   1.815  0.06969 .  
-    ## GOVTRESPT1             -0.109071   0.095162  -1.146  0.25192    
-    ## PEERCIVACT1             0.378000   0.070964   5.327 1.17e-07 ***
-    ## PARCIVT1:GOVTRESPT1    -0.001112   0.022095  -0.050  0.95987    
-    ## GOVTRESPT1:PEERCIVACT1  0.033324   0.024402   1.366  0.17229    
+    ##             Estimate Std. Error t value Pr(>|t|)    
+    ## (Intercept)  0.40586    0.09367   4.333 1.58e-05 ***
+    ## CRITNEWST1   0.12328    0.01656   7.444 1.70e-13 ***
+    ## PARCIVT1     0.07692    0.02053   3.746 0.000187 ***
+    ## PEERCIVACT1  0.44477    0.02205  20.169  < 2e-16 ***
     ## ---
     ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
     ## 
-    ## Residual standard error: 0.6633 on 1392 degrees of freedom
-    ##   (180 observations deleted due to missingness)
-    ## Multiple R-squared:  0.2803, Adjusted R-squared:  0.2777 
-    ## F-statistic: 108.4 on 5 and 1392 DF,  p-value: < 2.2e-16
+    ## Residual standard error: 0.6513 on 1399 degrees of freedom
+    ##   (175 observations deleted due to missingness)
+    ## Multiple R-squared:  0.3059, Adjusted R-squared:  0.3044 
+    ## F-statistic: 205.5 on 3 and 1399 DF,  p-value: < 2.2e-16
 
 ``` r
 plot_model(model, type = "est", show.values = TRUE, vline.color = "#1B191999", 
            line.size = 1.5, dot.size = 2.5, colors = "blue", 
-           terms = c("PARCIVT1", "PEERCIVACT1"), 
-           interaction = TRUE)
+           terms = c("CRITNEWST1", "PARCIVT1", "PEERCIVACT1"))
 ```
 
 ![](Lab6_DataCleaning_Myproject_PSY329_files/figure-gfm/unnamed-chunk-6-2.png)<!-- -->
+
+``` r
+tab_model(model)
+```
+
+<table style="border-collapse:collapse; border:none;">
+<tr>
+<th style="border-top: double; text-align:center; font-style:normal; font-weight:bold; padding:0.2cm;  text-align:left; ">
+ 
+</th>
+<th colspan="3" style="border-top: double; text-align:center; font-style:normal; font-weight:bold; padding:0.2cm; ">
+COMMMEANT1
+</th>
+</tr>
+<tr>
+<td style=" text-align:center; border-bottom:1px solid; font-style:italic; font-weight:normal;  text-align:left; ">
+Predictors
+</td>
+<td style=" text-align:center; border-bottom:1px solid; font-style:italic; font-weight:normal;  ">
+Estimates
+</td>
+<td style=" text-align:center; border-bottom:1px solid; font-style:italic; font-weight:normal;  ">
+CI
+</td>
+<td style=" text-align:center; border-bottom:1px solid; font-style:italic; font-weight:normal;  ">
+p
+</td>
+</tr>
+<tr>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; ">
+(Intercept)
+</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">
+0.41
+</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">
+0.22 – 0.59
+</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">
+<strong>\<0.001</strong>
+</td>
+</tr>
+<tr>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; ">
+CRITNEWST1
+</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">
+0.12
+</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">
+0.09 – 0.16
+</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">
+<strong>\<0.001</strong>
+</td>
+</tr>
+<tr>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; ">
+PARCIVT1
+</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">
+0.08
+</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">
+0.04 – 0.12
+</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">
+<strong>\<0.001</strong>
+</td>
+</tr>
+<tr>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; ">
+PEERCIVACT1
+</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">
+0.44
+</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">
+0.40 – 0.49
+</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">
+<strong>\<0.001</strong>
+</td>
+</tr>
+<tr>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; padding-top:0.1cm; padding-bottom:0.1cm; border-top:1px solid;">
+Observations
+</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; padding-top:0.1cm; padding-bottom:0.1cm; text-align:left; border-top:1px solid;" colspan="3">
+1403
+</td>
+</tr>
+<tr>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; padding-top:0.1cm; padding-bottom:0.1cm;">
+R<sup>2</sup> / R<sup>2</sup> adjusted
+</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; padding-top:0.1cm; padding-bottom:0.1cm; text-align:left;" colspan="3">
+0.306 / 0.304
+</td>
+</tr>
+</table>
