@@ -4,7 +4,6 @@ author: "Mursal Jahed"
 date: "2024-10-11"
 output: "github_document"
 ---
-
 #load packages
 ```{r}
 library(haven)
@@ -20,29 +19,15 @@ library(sjPlot)
 load("/Users/mursal_j/Downloads/ICPSR_36561/DS0001/36561-0001-Data.rda")
 ```
 
-#select variables
+#clean data
 ```{r}
-projectdata <- da36561.0001 %>%
-  select(PEERCIVACT1, PARCIVT1, COMMMEANT1, GENDERT1, ETH_MCT1, LIFE_MEAN_1T1, LIFE_MEAN_2T1, LIFE_MEAN_3T1, LIFE_MEAN_4T1, LIFE_MEAN_5T1, GRADET1)
-#recode LIFE_MEAN_5T1 to fit with rest of scale
-projectdata %>% count(LIFE_MEAN_5T1)
-
-projectdata$LIFE_MEAN_5T1_R <- 6 - projectdata$LIFE_MEAN_5T1
-#five is highest possible value on the scale therefore we put six
-#check to see if the recoding was successful
-projectdata %>% count(LIFE_MEAN_5T1_R)
-#line of code above is useful to know if it worked (you need to see that the order switched)
-
-#create composite of life meaning - will work on this in reading week, and try to have it as my exploratory function
-#mutate(life_meaning = rowMeans(cbind(LIFE_MEAN_1T1, LIFE_MEAN_2T1, LIFE_MEAN_3T1, LIFE_MEAN_4T1, LIFE_MEAN_5T1_R)))
+list_projectdata <- drop_na(da36561.0001)
 ```
 
-# Missing Data: listwise deletion, and verification that no NA values remain.
+#select variables
 ```{r}
-summary(projectdata)
-projectdata[projectdata == "NA"] <- NA
-list_projectdata <- drop_na(projectdata, PEERCIVACT1, PARCIVT1, COMMMEANT1, GENDERT1, ETH_MCT1, GRADET1)
-summary(list_projectdata)
+list_projectdata <- da36561.0001 %>% 
+  select(PEERCIVACT1, PARCIVT1, COMMMEANT1, GENDERT1, ETH_MCT1, GRADET1, GOVTRESPT1)
 ```
 
 #Checking for Assumptions
@@ -57,9 +42,9 @@ summary(model)
 plot_model(model,  type ="est",  show.values = TRUE, vline.color = "#1B191999", line.size = 1.5, dot.size = 2.5, colors = "blue")
 ```
 
-#Analysis - How does this relationship change if the gender of these teenagers is taken into account?
+#Analysis - How does this relationship change if the teens' beliefs about government responsiveness is taken into account?
 ```{r}
-model <- lm(COMMMEANT1 ~ PARCIVT1+ PARCIVT1 * GENDERT1 + PEERCIVACT1 + PEERCIVACT1 * GENDERT1, data = list_projectdata)
+model <- lm(COMMMEANT1 ~ PARCIVT1 * GOVTRESPT1 + PEERCIVACT1 * GOVTRESPT1, data = list_projectdata)
 check_model(model)
 summary(model)
 plot_model(model, type = "est", show.values = TRUE, vline.color = "#1B191999", 
