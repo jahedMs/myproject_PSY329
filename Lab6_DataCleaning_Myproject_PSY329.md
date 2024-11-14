@@ -78,8 +78,6 @@ library(sjPlot)
 
     ## Warning: package 'sjPlot' was built under R version 4.3.3
 
-    ## Install package "strengejacke" from GitHub (`devtools::install_github("strengejacke/strengejacke")`) to load all sj-packages at once!
-
 ``` r
 library(bruceR)
 ```
@@ -538,37 +536,6 @@ Factor Analysis
 
 ``` r
 #FA of COMMMEANT1/Teen community service
-Alpha(list_projectdata, vars=c("YIIACTS_3T1", "YIIACTS_5T1", "YIIACTS_11T1", "YIIACTS_13T1", "YIIACTS_15T1"))
-```
-
-    ## 
-    ## Reliability Analysis
-    ## 
-    ## Summary:
-    ## Total Items: 5
-    ## Scale Range: 1 ~ 4
-    ## Total Cases: 1578
-    ## Valid Cases: 1432 (90.7%)
-    ## 
-    ## Scale Statistics:
-    ## Mean = 2.651
-    ## S.D. = 0.781
-    ## Cronbach’s α = 0.836
-    ## McDonald’s ω = 0.839
-    ## 
-    ## Item Statistics (Cronbach’s α If Item Deleted):
-    ## ───────────────────────────────────────────────────────
-    ##                Mean    S.D. Item-Rest Cor. Cronbach’s α
-    ## ───────────────────────────────────────────────────────
-    ## YIIACTS_3T1   2.670 (0.930)          0.692        0.789
-    ## YIIACTS_5T1   2.865 (0.917)          0.494        0.839
-    ## YIIACTS_11T1  2.671 (1.067)          0.716        0.779
-    ## YIIACTS_13T1  2.534 (0.971)          0.617        0.808
-    ## YIIACTS_15T1  2.516 (1.125)          0.677        0.792
-    ## ───────────────────────────────────────────────────────
-    ## Item-Rest Cor. = Corrected Item-Total Correlation
-
-``` r
 EFA(list_projectdata, vars=c("YIIACTS_3T1", "YIIACTS_5T1", "YIIACTS_11T1", "YIIACTS_13T1", "YIIACTS_15T1"), method = "pa", plot.scree = TRUE, nfactors = c("parallel"))
 ```
 

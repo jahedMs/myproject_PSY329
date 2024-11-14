@@ -76,7 +76,6 @@ Corr(spearman_for_critnewst1, method = "spearman")
 Factor Analysis
 ```{r}
 #FA of COMMMEANT1/Teen community service
-Alpha(list_projectdata, vars=c("YIIACTS_3T1", "YIIACTS_5T1", "YIIACTS_11T1", "YIIACTS_13T1", "YIIACTS_15T1"))
 EFA(list_projectdata, vars=c("YIIACTS_3T1", "YIIACTS_5T1", "YIIACTS_11T1", "YIIACTS_13T1", "YIIACTS_15T1"), method = "pa", plot.scree = TRUE, nfactors = c("parallel"))
 ```
 
