@@ -78,6 +78,49 @@ library(sjPlot)
 
     ## Warning: package 'sjPlot' was built under R version 4.3.3
 
+    ## Install package "strengejacke" from GitHub (`devtools::install_github("strengejacke/strengejacke")`) to load all sj-packages at once!
+
+``` r
+library(bruceR)
+```
+
+    ## Warning: package 'bruceR' was built under R version 4.3.3
+
+    ## 
+    ## bruceR (v2024.6)
+    ## Broadly Useful Convenient and Efficient R functions
+    ## 
+    ## Packages also loaded:
+    ## ✔ data.table ✔ emmeans
+    ## ✔ dplyr      ✔ lmerTest
+    ## ✔ tidyr      ✔ effectsize
+    ## ✔ stringr    ✔ performance
+    ## ✔ ggplot2    ✔ interactions
+    ## 
+    ## Main functions of `bruceR`:
+    ## cc()             Describe()  TTEST()
+    ## add()            Freq()      MANOVA()
+    ## .mean()          Corr()      EMMEANS()
+    ## set.wd()         Alpha()     PROCESS()
+    ## import()         EFA()       model_summary()
+    ## print_table()    CFA()       lavaan_summary()
+    ## 
+    ## For full functionality, please install all dependencies:
+    ## install.packages("bruceR", dep=TRUE)
+    ## 
+    ## Online documentation:
+    ## https://psychbruce.github.io/bruceR
+    ## 
+    ## To use this package in publications, please cite:
+    ## Bao, H.-W.-S. (2024). bruceR: Broadly useful convenient and efficient R functions (Version 2024.6) [Computer software]. https://CRAN.R-project.org/package=bruceR
+
+    ## 
+    ## These packages are dependencies of `bruceR` but not installed:
+    ## - pacman, openxlsx, ggtext, vars, phia, MuMIn, GGally
+    ## 
+    ## ***** Install all dependencies *****
+    ## install.packages("bruceR", dep=TRUE)
+
 ``` r
 #load dataset
 load("/Users/mursal_j/Downloads/ICPSR_36561/DS0001/36561-0001-Data.rda")
@@ -85,15 +128,11 @@ load("/Users/mursal_j/Downloads/ICPSR_36561/DS0001/36561-0001-Data.rda")
 
 \#clean data
 
-``` r
-list_projectdata <- drop_na(da36561.0001)
-```
-
 \#select variables
 
 ``` r
 list_projectdata <- da36561.0001 %>% 
-  select(PEERCIVACT1, PARCIVT1, COMMMEANT1, GENDERT1, ETH_MCT1, GRADET1, CRITNEWST1)
+  select(PEERCIVACT1, PEERVAL_2T1, PEERVAL_4T1, PEERVAL_5T1, PARCIVT1, PARCIV_1T1, PARCIV_4T1, PARCIV_2T1, PARCIV_3T1, COMMMEANT1, YIIACTS_3T1, YIIACTS_5T1, YIIACTS_11T1, YIIACTS_13T1, YIIACTS_15T1, GENDERT1, GRADET1, CRITNEWST1, CRITNEWS_1T1, CRITNEWS_2T1)
 ```
 
 \#Checking for Assumptions
@@ -371,3 +410,300 @@ R<sup>2</sup> / R<sup>2</sup> adjusted
 </td>
 </tr>
 </table>
+
+\#Lab10
+
+``` r
+#*CRITNEWST1 only measured by two items so cannot run reliability and factor analysis
+#Reliability of COMMMEANT1/Teen community service
+Alpha(list_projectdata, vars=c("YIIACTS_3T1", "YIIACTS_5T1", "YIIACTS_11T1", "YIIACTS_13T1", "YIIACTS_15T1"))
+```
+
+    ## 
+    ## Reliability Analysis
+    ## 
+    ## Summary:
+    ## Total Items: 5
+    ## Scale Range: 1 ~ 4
+    ## Total Cases: 1578
+    ## Valid Cases: 1432 (90.7%)
+    ## 
+    ## Scale Statistics:
+    ## Mean = 2.651
+    ## S.D. = 0.781
+    ## Cronbach’s α = 0.836
+    ## McDonald’s ω = 0.839
+    ## 
+    ## Item Statistics (Cronbach’s α If Item Deleted):
+    ## ───────────────────────────────────────────────────────
+    ##                Mean    S.D. Item-Rest Cor. Cronbach’s α
+    ## ───────────────────────────────────────────────────────
+    ## YIIACTS_3T1   2.670 (0.930)          0.692        0.789
+    ## YIIACTS_5T1   2.865 (0.917)          0.494        0.839
+    ## YIIACTS_11T1  2.671 (1.067)          0.716        0.779
+    ## YIIACTS_13T1  2.534 (0.971)          0.617        0.808
+    ## YIIACTS_15T1  2.516 (1.125)          0.677        0.792
+    ## ───────────────────────────────────────────────────────
+    ## Item-Rest Cor. = Corrected Item-Total Correlation
+
+``` r
+#Reliability of PEERCIVACT1/Peer civic/academic values
+Alpha(list_projectdata, vars=c("PEERVAL_2T1", "PEERVAL_4T1", "PEERVAL_5T1"))
+```
+
+    ## 
+    ## Reliability Analysis
+    ## 
+    ## Summary:
+    ## Total Items: 3
+    ## Scale Range: 1 ~ 5
+    ## Total Cases: 1578
+    ## Valid Cases: 1434 (90.9%)
+    ## 
+    ## Scale Statistics:
+    ## Mean = 3.753
+    ## S.D. = 0.812
+    ## Cronbach’s α = 0.619
+    ## McDonald’s ω = 0.646
+    ## 
+    ## Item Statistics (Cronbach’s α If Item Deleted):
+    ## ──────────────────────────────────────────────────────
+    ##               Mean    S.D. Item-Rest Cor. Cronbach’s α
+    ## ──────────────────────────────────────────────────────
+    ## PEERVAL_2T1  3.416 (1.227)          0.401        0.577
+    ## PEERVAL_4T1  4.457 (0.806)          0.424        0.557
+    ## PEERVAL_5T1  3.385 (1.156)          0.500        0.406
+    ## ──────────────────────────────────────────────────────
+    ## Item-Rest Cor. = Corrected Item-Total Correlation
+
+``` r
+#Reliability of PARCIVT1/Parental civic involvement
+Alpha(list_projectdata, vars=c("PARCIV_1T1", "PARCIV_4T1", "PARCIV_2T1", "PARCIV_3T1"))
+```
+
+    ## 
+    ## Reliability Analysis
+    ## 
+    ## Summary:
+    ## Total Items: 4
+    ## Scale Range: 1 ~ 5
+    ## Total Cases: 1578
+    ## Valid Cases: 1437 (91.1%)
+    ## 
+    ## Scale Statistics:
+    ## Mean = 2.615
+    ## S.D. = 0.883
+    ## Cronbach’s α = 0.830
+    ## McDonald’s ω = 0.841
+    ## 
+    ## Item Statistics (Cronbach’s α If Item Deleted):
+    ## ─────────────────────────────────────────────────────
+    ##              Mean    S.D. Item-Rest Cor. Cronbach’s α
+    ## ─────────────────────────────────────────────────────
+    ## PARCIV_1T1  2.617 (1.041)          0.745        0.748
+    ## PARCIV_4T1  2.966 (1.157)          0.505        0.857
+    ## PARCIV_2T1  2.378 (1.050)          0.714        0.762
+    ## PARCIV_3T1  2.500 (1.087)          0.691        0.771
+    ## ─────────────────────────────────────────────────────
+    ## Item-Rest Cor. = Corrected Item-Total Correlation
+
+``` r
+#Reliability of CRITNEWST1 (Spearman's Rho)
+spearman_for_critnewst1 <- da36561.0001 %>% 
+  select(CRITNEWS_1T1, CRITNEWS_2T1)
+#create a new dataset with only two variables
+Corr(spearman_for_critnewst1, method = "spearman")
+```
+
+    ## NOTE: `CRITNEWS_1T1`, `CRITNEWS_2T1` transformed to numeric.
+    ## 
+    ## Spearman's r and 95% confidence intervals:
+    ## ───────────────────────────────────────────────────────────
+    ##                               r     [95% CI]     p        N
+    ## ───────────────────────────────────────────────────────────
+    ## CRITNEWS_1T1-CRITNEWS_2T1  0.61 [0.58, 0.64] <.001 *** 1546
+    ## ───────────────────────────────────────────────────────────
+
+![](Lab6_DataCleaning_Myproject_PSY329_files/figure-gfm/unnamed-chunk-7-1.png)<!-- -->
+
+    ## Correlation matrix is displayed in the RStudio `Plots` Pane.
+
+``` r
+#cor(list_projectdata$CRITNEWS_1T1, list_projectdata$CRITNEWS_2T1, use = "everything", method = "spearman")
+#list_projectdata$CRITNEWS_1T1<-as.numeric(list_projectdata$CRITNEWS_1T1)
+#list_projectdata$CRITNEWS_2T1<-as.numeric(list_projectdata$CRITNEWS_2T1)
+```
+
+Factor Analysis
+
+``` r
+#FA of COMMMEANT1/Teen community service
+Alpha(list_projectdata, vars=c("YIIACTS_3T1", "YIIACTS_5T1", "YIIACTS_11T1", "YIIACTS_13T1", "YIIACTS_15T1"))
+```
+
+    ## 
+    ## Reliability Analysis
+    ## 
+    ## Summary:
+    ## Total Items: 5
+    ## Scale Range: 1 ~ 4
+    ## Total Cases: 1578
+    ## Valid Cases: 1432 (90.7%)
+    ## 
+    ## Scale Statistics:
+    ## Mean = 2.651
+    ## S.D. = 0.781
+    ## Cronbach’s α = 0.836
+    ## McDonald’s ω = 0.839
+    ## 
+    ## Item Statistics (Cronbach’s α If Item Deleted):
+    ## ───────────────────────────────────────────────────────
+    ##                Mean    S.D. Item-Rest Cor. Cronbach’s α
+    ## ───────────────────────────────────────────────────────
+    ## YIIACTS_3T1   2.670 (0.930)          0.692        0.789
+    ## YIIACTS_5T1   2.865 (0.917)          0.494        0.839
+    ## YIIACTS_11T1  2.671 (1.067)          0.716        0.779
+    ## YIIACTS_13T1  2.534 (0.971)          0.617        0.808
+    ## YIIACTS_15T1  2.516 (1.125)          0.677        0.792
+    ## ───────────────────────────────────────────────────────
+    ## Item-Rest Cor. = Corrected Item-Total Correlation
+
+``` r
+EFA(list_projectdata, vars=c("YIIACTS_3T1", "YIIACTS_5T1", "YIIACTS_11T1", "YIIACTS_13T1", "YIIACTS_15T1"), method = "pa", plot.scree = TRUE, nfactors = c("parallel"))
+```
+
+    ## 
+    ## Explanatory Factor Analysis
+    ## 
+    ## Summary:
+    ## Total Items: 5
+    ## Scale Range: 1 ~ 4
+    ## Total Cases: 1578
+    ## Valid Cases: 1432 (90.7%)
+    ## 
+    ## Extraction Method:
+    ## - Principal Axis Factor Analysis
+    ## Rotation Method:
+    ## - (Only one component was extracted. The solution was not rotated.)
+    ## 
+    ## KMO and Bartlett's Test:
+    ## - Kaiser-Meyer-Olkin (KMO) Measure of Sampling Adequacy: MSA = 0.832
+    ## - Bartlett's Test of Sphericity: Approx. χ²(10) = 2734.97, p < 1e-99 ***
+    ## 
+    ## Total Variance Explained:
+    ## ───────────────────────────────────────────────────────────────────────────────
+    ##           Eigenvalue Variance % Cumulative % SS Loading Variance % Cumulative %
+    ## ───────────────────────────────────────────────────────────────────────────────
+    ## Factor 1       3.033     60.657       60.657      2.574     51.476       51.476
+    ## Factor 2       0.719     14.383       75.040                                   
+    ## Factor 3       0.521     10.428       85.468                                   
+    ## Factor 4       0.412      8.239       93.708                                   
+    ## Factor 5       0.315      6.292      100.000                                   
+    ## ───────────────────────────────────────────────────────────────────────────────
+    ## 
+    ## Factor Loadings (Sorted by Size):
+    ## ───────────────────────────────
+    ##                 PA1 Communality
+    ## ───────────────────────────────
+    ## YIIACTS_11T1  0.808       0.652
+    ## YIIACTS_3T1   0.769       0.591
+    ## YIIACTS_15T1  0.762       0.580
+    ## YIIACTS_13T1  0.676       0.458
+    ## YIIACTS_5T1   0.541       0.293
+    ## ───────────────────────────────
+    ## Communality = Sum of Squared (SS) Factor Loadings
+    ## (Uniqueness = 1 - Communality)
+
+![](Lab6_DataCleaning_Myproject_PSY329_files/figure-gfm/unnamed-chunk-8-1.png)<!-- -->
+
+``` r
+#FA of PEERCIVACT1/Peer civic/academic values
+EFA(list_projectdata, vars=c("PEERVAL_2T1", "PEERVAL_4T1", "PEERVAL_5T1"), method = "pa", plot.scree = TRUE, nfactors = c("parallel"))
+```
+
+    ## 
+    ## Explanatory Factor Analysis
+    ## 
+    ## Summary:
+    ## Total Items: 3
+    ## Scale Range: 1 ~ 5
+    ## Total Cases: 1578
+    ## Valid Cases: 1434 (90.9%)
+    ## 
+    ## Extraction Method:
+    ## - Principal Axis Factor Analysis
+    ## Rotation Method:
+    ## - (Only one component was extracted. The solution was not rotated.)
+    ## 
+    ## KMO and Bartlett's Test:
+    ## - Kaiser-Meyer-Olkin (KMO) Measure of Sampling Adequacy: MSA = 0.626
+    ## - Bartlett's Test of Sphericity: Approx. χ²(3) = 552.95, p < 1e-99 ***
+    ## 
+    ## Total Variance Explained:
+    ## ───────────────────────────────────────────────────────────────────────────────
+    ##           Eigenvalue Variance % Cumulative % SS Loading Variance % Cumulative %
+    ## ───────────────────────────────────────────────────────────────────────────────
+    ## Factor 1       1.735     57.818       57.818      1.156     38.519       38.519
+    ## Factor 2       0.725     24.181       81.998                                   
+    ## Factor 3       0.540     18.002      100.000                                   
+    ## ───────────────────────────────────────────────────────────────────────────────
+    ## 
+    ## Factor Loadings (Sorted by Size):
+    ## ──────────────────────────────
+    ##                PA1 Communality
+    ## ──────────────────────────────
+    ## PEERVAL_5T1  0.769       0.591
+    ## PEERVAL_4T1  0.561       0.314
+    ## PEERVAL_2T1  0.500       0.250
+    ## ──────────────────────────────
+    ## Communality = Sum of Squared (SS) Factor Loadings
+    ## (Uniqueness = 1 - Communality)
+
+![](Lab6_DataCleaning_Myproject_PSY329_files/figure-gfm/unnamed-chunk-9-1.png)<!-- -->
+
+``` r
+#FA of PARCIVT1/Parental civic involvement
+EFA(list_projectdata, vars=c("PARCIV_1T1", "PARCIV_4T1", "PARCIV_2T1", "PARCIV_3T1"), method = "pa", plot.scree = TRUE, nfactors = c("parallel"))
+```
+
+    ## 
+    ## Explanatory Factor Analysis
+    ## 
+    ## Summary:
+    ## Total Items: 4
+    ## Scale Range: 1 ~ 5
+    ## Total Cases: 1578
+    ## Valid Cases: 1437 (91.1%)
+    ## 
+    ## Extraction Method:
+    ## - Principal Axis Factor Analysis
+    ## Rotation Method:
+    ## - (Only one component was extracted. The solution was not rotated.)
+    ## 
+    ## KMO and Bartlett's Test:
+    ## - Kaiser-Meyer-Olkin (KMO) Measure of Sampling Adequacy: MSA = 0.795
+    ## - Bartlett's Test of Sphericity: Approx. χ²(6) = 2398.79, p < 1e-99 ***
+    ## 
+    ## Total Variance Explained:
+    ## ───────────────────────────────────────────────────────────────────────────────
+    ##           Eigenvalue Variance % Cumulative % SS Loading Variance % Cumulative %
+    ## ───────────────────────────────────────────────────────────────────────────────
+    ## Factor 1       2.690     67.245       67.245      2.305     57.622       57.622
+    ## Factor 2       0.651     16.271       83.516                                   
+    ## Factor 3       0.368      9.204       92.720                                   
+    ## Factor 4       0.291      7.280      100.000                                   
+    ## ───────────────────────────────────────────────────────────────────────────────
+    ## 
+    ## Factor Loadings (Sorted by Size):
+    ## ─────────────────────────────
+    ##               PA1 Communality
+    ## ─────────────────────────────
+    ## PARCIV_1T1  0.858       0.736
+    ## PARCIV_2T1  0.806       0.649
+    ## PARCIV_3T1  0.789       0.622
+    ## PARCIV_4T1  0.546       0.298
+    ## ─────────────────────────────
+    ## Communality = Sum of Squared (SS) Factor Loadings
+    ## (Uniqueness = 1 - Communality)
+
+![](Lab6_DataCleaning_Myproject_PSY329_files/figure-gfm/unnamed-chunk-10-1.png)<!-- -->

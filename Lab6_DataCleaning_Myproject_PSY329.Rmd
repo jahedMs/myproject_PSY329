@@ -15,19 +15,20 @@ library(car)
 library(lmtest)
 library(performance)
 library(sjPlot)
+library(bruceR)
 #load dataset
 load("/Users/mursal_j/Downloads/ICPSR_36561/DS0001/36561-0001-Data.rda")
 ```
 
 #clean data
 ```{r}
-list_projectdata <- drop_na(da36561.0001)
+
 ```
 
 #select variables
 ```{r}
 list_projectdata <- da36561.0001 %>% 
-  select(PEERCIVACT1, PARCIVT1, COMMMEANT1, GENDERT1, ETH_MCT1, GRADET1, CRITNEWST1)
+  select(PEERCIVACT1, PEERVAL_2T1, PEERVAL_4T1, PEERVAL_5T1, PARCIVT1, PARCIV_1T1, PARCIV_4T1, PARCIV_2T1, PARCIV_3T1, COMMMEANT1, YIIACTS_3T1, YIIACTS_5T1, YIIACTS_11T1, YIIACTS_13T1, YIIACTS_15T1, GENDERT1, GRADET1, CRITNEWST1, CRITNEWS_1T1, CRITNEWS_2T1)
 ```
 
 #Checking for Assumptions
@@ -52,5 +53,41 @@ plot_model(model, type = "est", show.values = TRUE, vline.color = "#1B191999",
            line.size = 1.5, dot.size = 2.5, colors = "blue", 
            terms = c("CRITNEWST1", "PARCIVT1", "PEERCIVACT1"))
 tab_model(model)
+```
+
+#Lab10
+```{r}
+#*CRITNEWST1 only measured by two items so cannot run reliability and factor analysis
+#Reliability of COMMMEANT1/Teen community service
+Alpha(list_projectdata, vars=c("YIIACTS_3T1", "YIIACTS_5T1", "YIIACTS_11T1", "YIIACTS_13T1", "YIIACTS_15T1"))
+#Reliability of PEERCIVACT1/Peer civic/academic values
+Alpha(list_projectdata, vars=c("PEERVAL_2T1", "PEERVAL_4T1", "PEERVAL_5T1"))
+#Reliability of PARCIVT1/Parental civic involvement
+Alpha(list_projectdata, vars=c("PARCIV_1T1", "PARCIV_4T1", "PARCIV_2T1", "PARCIV_3T1"))
+#Reliability of CRITNEWST1 (Spearman's Rho)
+spearman_for_critnewst1 <- da36561.0001 %>% 
+  select(CRITNEWS_1T1, CRITNEWS_2T1)
+#create a new dataset with only two variables
+Corr(spearman_for_critnewst1, method = "spearman")
+#cor(list_projectdata$CRITNEWS_1T1, list_projectdata$CRITNEWS_2T1, use = "everything", method = "spearman")
+#list_projectdata$CRITNEWS_1T1<-as.numeric(list_projectdata$CRITNEWS_1T1)
+#list_projectdata$CRITNEWS_2T1<-as.numeric(list_projectdata$CRITNEWS_2T1)
+```
+Factor Analysis
+```{r}
+#FA of COMMMEANT1/Teen community service
+Alpha(list_projectdata, vars=c("YIIACTS_3T1", "YIIACTS_5T1", "YIIACTS_11T1", "YIIACTS_13T1", "YIIACTS_15T1"))
+EFA(list_projectdata, vars=c("YIIACTS_3T1", "YIIACTS_5T1", "YIIACTS_11T1", "YIIACTS_13T1", "YIIACTS_15T1"), method = "pa", plot.scree = TRUE, nfactors = c("parallel"))
+```
+
+```{r}
+#FA of PEERCIVACT1/Peer civic/academic values
+EFA(list_projectdata, vars=c("PEERVAL_2T1", "PEERVAL_4T1", "PEERVAL_5T1"), method = "pa", plot.scree = TRUE, nfactors = c("parallel"))
+
+```
+
+```{r}
+#FA of PARCIVT1/Parental civic involvement
+EFA(list_projectdata, vars=c("PARCIV_1T1", "PARCIV_4T1", "PARCIV_2T1", "PARCIV_3T1"), method = "pa", plot.scree = TRUE, nfactors = c("parallel"))
 ```
 
