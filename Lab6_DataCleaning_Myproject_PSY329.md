@@ -412,7 +412,6 @@ R<sup>2</sup> / R<sup>2</sup> adjusted
 \#Lab10
 
 ``` r
-#*CRITNEWST1 only measured by two items so cannot run reliability and factor analysis
 #Reliability of COMMMEANT1/Teen community service
 Alpha(list_projectdata, vars=c("YIIACTS_3T1", "YIIACTS_5T1", "YIIACTS_11T1", "YIIACTS_13T1", "YIIACTS_15T1"))
 ```
